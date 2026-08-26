@@ -3,256 +3,481 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cohen Bryant Technical Portfolio</title>
-    <link rel="icon" type="image/png" href="/assets/seedream-4.5_a_cinematic_photo_of_A_high-end_modern_tech_logo_centered_on_a_deep_charcoal_bla-0.jpg">
-
-    <!-- Link to external CSS stylesheet -->
+    <meta name="description" content="Portfolio of Cohen Bryant, a Mechanical Engineering student at UW-Madison specializing in embedded systems, nuclear propulsion, and thermal energy architectures.">
+    <title>Cohen Bryant — Mechanical Engineering Portfolio</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="assets/seedream-4.5_a_cinematic_photo_of_A_high-end_modern_tech_logo_centered_on_a_deep_charcoal_bla-0.jpg" type="image/jpeg">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <a class="skip-link" href="#work">Skip to work</a>
 
-    <!-- Navigation Header -->
+    <div class="page-grid" aria-hidden="true"></div>
+    <div class="page-noise" aria-hidden="true"></div>
+    <div class="page-glow" aria-hidden="true"></div>
+
     <header class="navbar">
         <div class="container nav-container">
-            <a href="#" class="nav-logo">Cohen Bryant Technical Portfolio</a>
-            <nav>
+            <a href="#top" class="nav-logo">
+                <span class="nav-mark">CB</span>
+                <span class="nav-name">Cohen Bryant</span>
+            </a>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu">
+                <span></span><span></span>
+            </button>
+            <nav id="site-nav">
                 <ul class="nav-links">
-                    <li><a href="#projects">Projects</a></li>
-                    <li><a href="assets/Resume_Cohen_Bryant_Nuclear_Energy_Engineering_2026-08.pdf" target="_blank" class="nav-resume-btn">Resume</a></li>
+                    <li><a href="#focus">Focus</a></li>
+                    <li><a href="#work">Work</a></li>
+                    <li><a href="#capabilities">Capabilities</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="assets/Resume_Cohen_Bryant_Nuclear_Energy_Engineering_2026-08.pdf" target="_blank" rel="noopener noreferrer" class="nav-resume-btn">Resume</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container hero-container">
-            <div class="hero-content">
-                <span class="hero-greeting">Mechanical Engineering & Computational Systems</span>
-                <h1 class="hero-title">Designing intelligent hardware, propulsion models, & web platforms.</h1>
-                <p class="hero-bio">
-                    First-year mechanical engineering student at UW-Madison focused on nuclear reactor modeling, dynamic control systems, and full-stack web platforms.
+    <main id="top">
+        <section class="hero">
+            <canvas id="hero-canvas" aria-hidden="true"></canvas>
+            <div class="container hero-container">
+                <p class="hero-status reveal">
+                    <span class="status-dot" aria-hidden="true"></span>
+                    UW–Madison · B.S. Mechanical Engineering · Class of 2030
                 </p>
-                <div class="hero-cta">
-                    <a href="#projects" class="btn-primary">View Projects</a>
-                    <a href="mailto:cohenbryant22@gmail.com" class="btn-secondary">Get in Touch</a>
+                <h1 class="hero-title reveal reveal-delay-1">Engineering systems where physics, hardware, and computation have to agree.</h1>
+                <p class="hero-bio reveal reveal-delay-2">
+                    I build working models of nuclear transients, embedded vehicle controls, and thermal energy systems — then verify them against theory. Interested in nuclear propulsion, thermal architectures, and the energy sector at organizations that treat engineering as a mission.
+                </p>
+                <div class="hero-cta reveal reveal-delay-3">
+                    <a href="#work" class="btn-primary">View selected work</a>
+                    <a href="mailto:cohenbryant22@gmail.com" class="btn-secondary">Request a conversation</a>
+                </div>
+                <div class="hero-stats reveal reveal-delay-4">
+                    <div class="stat-item">
+                        <div class="stat-value" data-target="5">0</div>
+                        <div class="stat-label">Projects Built</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" data-target="4">0</div>
+                        <div class="stat-label">Technical Domains</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" data-target="3" data-suffix="+">0</div>
+                        <div class="stat-label">Live Deployments</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" data-target="3">0</div>
+                        <div class="stat-label">Engineering Teams</div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Projects Section -->
-    <section id="projects" class="projects-section">
-        <div class="container">
-            <h2 class="section-title">Technical & Computational Projects</h2>
-
-            <!-- Category Filter Buttons -->
-            <div class="filter-container">
-                <button class="filter-btn active" onclick="filterProjects('all')">All</button>
-                <button class="filter-btn" onclick="filterProjects('nuclear')">Nuclear</button>
-                <button class="filter-btn" onclick="filterProjects('mechanical')">Mechanical</button>
-                <button class="filter-btn" onclick="filterProjects('web')">Web Architect</button>
+        <section id="focus" class="section">
+            <div class="container">
+                <div class="section-header reveal">
+                    <p class="section-eyebrow">01 / Mission domains</p>
+                    <h2 class="section-title">Technical Focus</h2>
+                </div>
+                <div class="focus-grid">
+                    <div class="focus-card reveal reveal-delay-1">
+                        <h3 class="focus-title">Embedded Systems</h3>
+                        <p class="focus-desc">Bridging hardware and software with microcontrollers to drive actuators, process sensor data, and control dynamic mechanical systems.</p>
+                    </div>
+                    <div class="focus-card reveal reveal-delay-2">
+                        <h3 class="focus-title">Nuclear Propulsion</h3>
+                        <p class="focus-desc">Exploring reactor kinetics, thermal-hydraulic limits, and control strategies for high-thrust, high-efficiency space and marine applications.</p>
+                    </div>
+                    <div class="focus-card reveal reveal-delay-3">
+                        <h3 class="focus-title">Thermal Systems</h3>
+                        <p class="focus-desc">Designing and modeling architectures for heat transfer, fluid dynamics, and thermodynamic cycles in demanding environments.</p>
+                    </div>
+                    <div class="focus-card reveal reveal-delay-4">
+                        <h3 class="focus-title">Energy Sector</h3>
+                        <p class="focus-desc">Developing technical solutions and data-driven insights to improve the efficiency, safety, and scalability of modern power generation.</p>
+                    </div>
+                </div>
             </div>
-            
-            <div class="projects-grid">
+        </section>
+
+        <section id="work" class="section">
+            <div class="container">
+                <div class="section-header reveal">
+                    <p class="section-eyebrow">02 / Selected work</p>
+                    <h2 class="section-title">Engineering Projects</h2>
+                </div>
                 
-                <!-- Project 1: Xe-135 Simulator -->
-                <div class="project-card" data-category="nuclear web">
-                    <div class="card-header">
-                        <span class="role-badge">Creator & Developer</span>
-                        <h3>Transient Nuclear Reactor Xe-135 Simulator</h3>
+                <div class="filter-group reveal">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="nuclear">Nuclear</button>
+                    <button class="filter-btn" data-filter="embedded">Embedded</button>
+                    <button class="filter-btn" data-filter="mechanical">Mechanical</button>
+                    <button class="filter-btn" data-filter="software">Software</button>
+                </div>
+
+                <div class="projects-grid">
+                    <!-- Card 1: Xe-135 Simulator -->
+                    <div class="project-card featured reveal" data-category="nuclear software">
+                        <div class="card-visual visual-xe">
+                            <div class="orbit-container">
+                                <div class="core-pulse"></div>
+                                <div class="orbit orbit-1"></div>
+                                <div class="orbit orbit-2"></div>
+                                <div class="orbit orbit-3"></div>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-header">
+                                <span class="project-role">Creator & Developer</span>
+                                <h3 class="project-title">Transient Nuclear Reactor Xe-135 Simulator</h3>
+                            </div>
+                            <p class="project-desc">A live web-based simulator modeling Xenon-135 poisoning dynamics in a thermal reactor. It solves differential rate equations in real-time to demonstrate spatial oscillations and the 'Xenon pit' phenomenon during power transients.</p>
+                            <div class="project-tech">
+                                <span class="tech-tag">JavaScript</span>
+                                <span class="tech-tag">Differential kinetics</span>
+                                <span class="tech-tag">Reactor control UI</span>
+                            </div>
+                            <div class="project-actions">
+                                <button class="btn-text" data-modal="modal-xe135">Case notes</button>
+                                <a href="https://xenon-project-six.vercel.app" target="_blank" rel="noopener noreferrer" class="btn-icon" aria-label="View live simulator">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                    <p class="summary">Web-based computational simulator modeling transient Xenon-135 reactivity poisoning and reactor dead-out periods following neutron flux step changes.</p>
-                    <div class="tech-stack">
-                        <span>JavaScript</span>
-                        <span>Differential Kinetics</span>
-                        <span>UI/UX</span>
+
+                    <!-- Card 2: ESP32 Wheeled Vehicle -->
+                    <div class="project-card reveal reveal-delay-1" data-category="embedded mechanical">
+                        <div class="card-visual visual-vehicle"></div>
+                        <div class="card-content">
+                            <div class="card-header">
+                                <span class="project-role">Hardware & Control Lead</span>
+                                <h3 class="project-title">ESP32 Wheeled Vehicle & Hardware Controls</h3>
+                            </div>
+                            <p class="project-desc">Autonomous wheeled platform: C++ motor drive and speed control on an Arduino Nano ESP32, with SolidWorks chassis, drivetrain, and motor brackets held to print-ready tolerances. Designed custom signal processing for sensor integration.</p>
+                            <div class="project-tech">
+                                <span class="tech-tag">C++ / Arduino</span>
+                                <span class="tech-tag">SolidWorks</span>
+                                <span class="tech-tag">3D Printing</span>
+                            </div>
+                            <div class="project-actions">
+                                <button class="btn-text" data-modal="modal-esp32">Case notes</button>
+                                <a href="https://github.com/CBryant244/TrackedVehicle" target="_blank" rel="noopener noreferrer" class="btn-icon" aria-label="View GitHub repository">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-actions">
-                        <button class="btn-details" onclick="openModal('modal-xe135')">View Details</button>
-                        <a href="https://xenon-project-six.vercel.app" target="_blank" class="btn-link">Live App &rarr;</a>
+
+                    <!-- Card 3: Launcher -->
+                    <div class="project-card reveal reveal-delay-2" data-category="mechanical embedded">
+                        <div class="card-visual">
+                            <div class="card-gallery">
+                                <img src="assets/launcher-front.jpg" alt="Launcher front view showing wheeled chassis and ball tube" loading="lazy">
+                                <img src="assets/launcher-top.jpg" alt="Launcher top view showing barrel and feed mechanism" loading="lazy">
+                                <img src="assets/launcher-side.jpg" alt="Launcher side view showing structural framework" loading="lazy">
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-header">
+                                <span class="project-role">Mechanical Design & Analysis</span>
+                                <h3 class="project-title">Moving Target Launcher & Trajectory Calculator</h3>
+                            </div>
+                            <p class="project-desc">Engineered an automated pneumatic launcher system capable of tracking and striking moving targets. Developed kinematic models to predict trajectories, integrating sensor feedback with an Arduino microcontroller to adjust pitch and yaw dynamically.</p>
+                            <div class="project-tech">
+                                <span class="tech-tag">Physics modeling</span>
+                                <span class="tech-tag">Machining</span>
+                                <span class="tech-tag">Arduino</span>
+                                <span class="tech-tag">SolidWorks</span>
+                            </div>
+                            <div class="project-actions">
+                                <button class="btn-text" data-modal="modal-launcher">Case notes</button>
+                                <a href="assets/Ball launcher Portfolio.pdf" target="_blank" rel="noopener noreferrer" class="btn-icon" aria-label="View project report">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: NucInfo -->
+                    <div class="project-card reveal reveal-delay-1" data-category="nuclear software">
+                        <div class="card-visual visual-nuc"></div>
+                        <div class="card-content">
+                            <div class="card-header">
+                                <span class="project-role">Developer & Researcher</span>
+                                <h3 class="project-title">Nuclear Systems Analytics (NucInfo)</h3>
+                            </div>
+                            <p class="project-desc">A comprehensive dashboard presenting operational data, thermodynamic cycle efficiencies, and safety metrics for various reactor designs. Built to aggregate technical specifications and communicate complex energy concepts effectively.</p>
+                            <div class="project-tech">
+                                <span class="tech-tag">Web analytics</span>
+                                <span class="tech-tag">Data visualization</span>
+                                <span class="tech-tag">Thermodynamics</span>
+                            </div>
+                            <div class="project-actions">
+                                <button class="btn-text" data-modal="modal-nucinfo">Case notes</button>
+                                <a href="https://nucinfo.vercel.app" target="_blank" rel="noopener noreferrer" class="btn-icon" aria-label="View live dashboard">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 5: ME Connect -->
+                    <div class="project-card reveal reveal-delay-2" data-category="software">
+                        <div class="card-visual visual-me">
+                            <img src="assets/seedream-4.5_a_cinematic_photo_of_A_high-end_modern_tech_logo_centered_on_a_deep_charcoal_bla-0.jpg" alt="ME Connect Student Engineering Platform Logo" class="project-img-logo" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
+                        </div>
+                        <div class="card-content">
+                            <div class="card-header">
+                                <span class="project-role">Creator & Web Architect</span>
+                                <h3 class="project-title">ME Connect Student Engineering Platform</h3>
+                            </div>
+                            <p class="project-desc">A centralized hub developed for mechanical engineering students to discover project teams, access academic resources, and network with peers. Designed with a robust architecture to handle expanding user bases and varied content types.</p>
+                            <div class="project-tech">
+                                <span class="tech-tag">Web architecture</span>
+                                <span class="tech-tag">Platform design</span>
+                                <span class="tech-tag">UW–Madison</span>
+                            </div>
+                            <div class="project-actions">
+                                <button class="btn-text" data-modal="modal-meconnect">Case notes</button>
+                                <a href="https://me-connect.vercel.app" target="_blank" rel="noopener noreferrer" class="btn-icon" aria-label="View live platform">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="capabilities" class="section">
+            <div class="container">
+                <div class="section-header reveal">
+                    <p class="section-eyebrow">03 / Capabilities</p>
+                    <h2 class="section-title">Tools I use to close the loop</h2>
+                </div>
+                <div class="cap-grid">
+                    <div class="cap-card reveal reveal-delay-1">
+                        <div class="cap-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/><circle cx="12" cy="12" r="3"/></svg>
+                        </div>
+                        <h3 class="cap-title">CAD & Simulation</h3>
+                        <p class="cap-desc">SolidWorks for precision part modeling and assembly design; Ansys for thermal and structural finite element analysis.</p>
+                    </div>
+                    <div class="cap-card reveal reveal-delay-2">
+                        <div class="cap-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+                        </div>
+                        <h3 class="cap-title">Hardware & Electronics</h3>
+                        <p class="cap-desc">Arduino, ESP32, circuit design, sensor integration, and high-frequency data acquisition for physical testing.</p>
+                    </div>
+                    <div class="cap-card reveal reveal-delay-3">
+                        <div class="cap-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                        </div>
+                        <h3 class="cap-title">Fabrication</h3>
+                        <p class="cap-desc">Rapid prototyping via FDM/SLA 3D printing, manual machining (mill/lathe), and iterative physical assembly.</p>
+                    </div>
+                    <div class="cap-card reveal reveal-delay-4">
+                        <div class="cap-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+                        </div>
+                        <h3 class="cap-title">Computation</h3>
+                        <p class="cap-desc">C/C++ for embedded logic, Python and MATLAB for data analysis and numerical modeling, JavaScript for interactive tooling.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="section">
+            <div class="container">
+                <div class="section-header reveal">
+                    <p class="section-eyebrow">04 / Profile</p>
+                    <h2 class="section-title">Cohen Bryant</h2>
+                </div>
+                
+                <div class="about-content">
+                    <div class="about-photo-wrapper reveal">
+                        <img src="assets/cohen-headshot.jpg" alt="Cohen Bryant at UW-Madison College of Engineering" class="about-photo" loading="lazy">
+                    </div>
+                    <div class="about-copy reveal reveal-delay-1">
+                        <p>I am a Mechanical Engineering student at the University of Wisconsin–Madison with a driving interest in systems that push the boundaries of energy density, thermal limits, and precise control.</p>
+                        <p>My approach to engineering is grounded in building real hardware to validate theoretical models. Whether I'm programming an ESP32 to dictate vehicle dynamics or simulating reactor kinetics in software, I look for the intersections where physical mechanics and computational intelligence meet.</p>
+                        <p>Outside of the classroom, I contribute to competitive engineering teams including Liquid Rocketry and Formula SAE, where I focus on CAD, fabrication, and integrating sub-systems under strict performance requirements. I am actively seeking opportunities in the aerospace, defense, and advanced energy sectors where rigorous engineering is the standard.</p>
                     </div>
                 </div>
 
-                <!-- Project 2: ESP32 Tracked Vehicle -->
-                <div class="project-card" data-category="mechanical">
-                    <div class="card-header">
-                        <span class="role-badge">Hardware & Control Lead</span>
-                        <h3>Arduino ESP32 Tracked Vehicle & Hardware Controls</h3>
+                <div class="timeline reveal">
+                    <div class="timeline-item">
+                        <p class="timeline-date">Aug 2026 – Present</p>
+                        <h4 class="timeline-title">AIAA · Liquid Rocketry · Formula SAE</h4>
+                        <p class="timeline-desc">CAD, subsystem fabrication, and test-rig setup with upperclassmen engineers on competition builds.</p>
                     </div>
-                    <p class="summary">Autonomous tracked vehicle managing motor drive logic, signal processing, and custom SolidWorks chassis components.</p>
-                    <div class="tech-stack">
-                        <span>C++ / Arduino</span>
-                        <span>SolidWorks</span>
-                        <span>3D Printing</span>
-                    </div>
-                    <div class="card-actions">
-                        <button class="btn-details" onclick="openModal('modal-esp32')">View Details</button>
-                        <a href="https://github.com/CBryant244/TrackedVehicle" target="_blank" class="btn-link">
-    GitHub Repo &rarr;
-</a>
+                    <div class="timeline-item">
+                        <p class="timeline-date">Sep 2026 – Present</p>
+                        <h4 class="timeline-title">University of Wisconsin–Madison</h4>
+                        <p class="timeline-desc">B.S. Mechanical Engineering. Coursework: Calculus II/III, Statics, Engineering Design, SolidWorks, Python/MATLAB.</p>
                     </div>
                 </div>
+            </div>
+        </section>
+    </main>
 
-                <!-- Project 3: Custom Launcher -->
-                <div class="project-card" data-category="mechanical">
-                    <div class="card-header">
-                        <span class="role-badge">Mechanical Design & Analysis</span>
-                        <h3>Custom Launcher & Trajectory Calculator</h3>
-                    </div>
-                    <p class="summary">Mechanical launcher build utilizing calculus and physics modeling to align physical launches within 5% of theoretical predictions.</p>
-                    <div class="tech-stack">
-                        <span>Physics Modeling</span>
-                        <span>Machining</span>
-                        <span>Calculus</span>
-                    </div>
-                    <div class="card-actions">
-                        <button class="btn-details" onclick="openModal('modal-launcher')">View Details</button>
-                        <a href="/assets/Ball launcher Portfolio.pdf" target="_blank" class="btn-link">Live App &rarr;</a>
-                    </div>
-                </div>
-
-                <!-- Project 4: NucInfo Analytics -->
-                <div class="project-card" data-category="nuclear web">
-                    <div class="card-header">
-                        <span class="role-badge">Developer & Researcher</span>
-                        <h3>Nuclear Systems Analytics Dashboard (NucInfo)</h3>
-                    </div>
-                    <p class="summary">Interactive analytics platform visualizing fission/fusion thermodynamics, capacity factor metrics, and lifecycle carbon intensity.</p>
-                    <div class="tech-stack">
-                        <span>Web Analytics</span>
-                        <span>Data Viz</span>
-                        <span>Thermodynamics</span>
-                    </div>
-                    <div class="card-actions">
-                        <button class="btn-details" onclick="openModal('modal-nucinfo')">View Details</button>
-                        <a href="https://nucinfo.vercel.app" target="_blank" class="btn-link">Live App &rarr;</a>
-                    </div>
-                </div>
-
-                <!-- Project 5: ME Connect -->
-                <div class="project-card" data-category="web">
-                    <div class="card-header">
-                        <span class="role-badge">Creator & Web Architect</span>
-                        <h3>ME Connect Student Engineering Platform</h3>
-                    </div>
-                    <p class="summary">Centralized networking platform connecting engineering undergraduates with faculty, mentorship portals, and course resources.</p>
-                    <div class="tech-stack">
-                        <span>Web Architecture</span>
-                        <span>Platform Design</span>
-                        <span>UW-Madison</span>
-                    </div>
-                    <div class="card-actions">
-                        <button class="btn-details" onclick="openModal('modal-meconnect')">View Details</button>
-                        <a href="https://me-connect.vercel.app" target="_blank" class="btn-link">Live App &rarr;</a>
-                    </div>
-                </div>
-
+    <!-- Modals -->
+    <div id="modal-xe135" class="modal" aria-hidden="true" role="dialog" aria-labelledby="modal-xe135-title">
+        <div class="modal-backdrop" data-close></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="project-role">Creator & Developer</span>
+                <h3 id="modal-xe135-title" class="project-title">Transient Nuclear Reactor Xe-135 Simulator</h3>
+                <button class="modal-close" aria-label="Close modal" data-close>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>This simulator provides a visual, real-time representation of Xenon-135 behavior within a nuclear reactor core during load-following transients.</p>
+                <h4>Technical Details:</h4>
+                <ul>
+                    <li>Implemented numerical solvers in JavaScript to integrate Iodine-135 and Xenon-135 concentration equations over simulated time.</li>
+                    <li>Designed an intuitive control interface allowing users to adjust reactor power levels and observe the resulting delayed isotopic responses.</li>
+                    <li>Visualized core dynamics to effectively illustrate the 'Xenon pit' dead-time and the risk of spatial power oscillations.</li>
+                </ul>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- Modals for Expanded Bullet Points -->
-    <div id="modal-xe135" class="modal">
+    <div id="modal-esp32" class="modal" aria-hidden="true" role="dialog" aria-labelledby="modal-esp32-title">
+        <div class="modal-backdrop" data-close></div>
         <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('modal-xe135')">&times;</span>
-            <h2>Transient Nuclear Reactor Xenon-135 Simulator</h2>
-            <p class="modal-role">Creator & Developer</p>
-            <ul>
-                <li>Built a web-based computational simulator to model transient Xenon-135 reactivity poisoning and reactor dead-out periods following thermal neutron flux step changes.</li>
-                <li>Programmed differential decay kinetics for Iodine-135 and Xenon-135 in JavaScript to plot dynamic power shifts, peak poison concentrations, and override windows.</li>
-                <li>Designed an interactive UI to evaluate reactor control constraints and steady-state equilibrium power transitions.</li>
-            </ul>
+            <div class="modal-header">
+                <span class="project-role">Hardware & Control Lead</span>
+                <h3 id="modal-esp32-title" class="project-title">ESP32 Wheeled Vehicle & Hardware Controls</h3>
+                <button class="modal-close" aria-label="Close modal" data-close>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>An autonomous wheeled platform bridging the gap between mechanical design and embedded control systems.</p>
+                <h4>Technical Details:</h4>
+                <ul>
+                    <li>Programmed an Arduino Nano ESP32 in C++ to manage motor drive logic, speed control, and hardware signal processing for an autonomous wheeled vehicle.</li>
+                    <li>Modeled custom chassis and drivetrain components in SolidWorks, applying tight tolerances for 3D-printed drive components and motor brackets.</li>
+                    <li>Implemented sensor signal processing and resolved runtime C++ compilation errors, structured code directories, and documented wiring schematics to ensure hardware reliability.</li>
+                </ul>
+            </div>
         </div>
     </div>
 
-    <div id="modal-esp32" class="modal">
+    <div id="modal-launcher" class="modal" aria-hidden="true" role="dialog" aria-labelledby="modal-launcher-title">
+        <div class="modal-backdrop" data-close></div>
         <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('modal-esp32')">&times;</span>
-            <h2>Arduino ESP32 Tracked Vehicle & Hardware Controls</h2>
-            <p class="modal-role">Hardware & Control Lead</p>
-            <ul>
-                <li>Programmed an Arduino Nano ESP32 in C++ to manage motor drive logic, speed control, and hardware signal processing for an autonomous tracked vehicle.</li>
-                <li>Modeled custom chassis and drivetrain components in SolidWorks, applying tight tolerances for 3D-printed drive sprockets and motor brackets.</li>
-                <li>Resolved runtime C++ compilation errors, structured code directories, and documented wiring schematics to ensure hardware reliability.</li>
-            </ul>
+            <div class="modal-header">
+                <span class="project-role">Mechanical Design & Analysis</span>
+                <h3 id="modal-launcher-title" class="project-title">Moving Target Launcher & Trajectory Calculator</h3>
+                <button class="modal-close" aria-label="Close modal" data-close>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>A multi-disciplinary project combining mechanical fabrication with dynamic targeting algorithms.</p>
+                <h4>Technical Details:</h4>
+                <ul>
+                    <li>Designed the pneumatic launch mechanism and structural chassis using SolidWorks, followed by manual machining and assembly.</li>
+                    <li>Developed kinematic algorithms in Python/C++ to calculate required launch angles based on moving target velocity and distance.</li>
+                    <li>Integrated servo motors and sensors with an Arduino to provide real-time, automated adjustments to the launcher's pitch and yaw.</li>
+                </ul>
+            </div>
         </div>
     </div>
 
-    <div id="modal-launcher" class="modal">
+    <div id="modal-nucinfo" class="modal" aria-hidden="true" role="dialog" aria-labelledby="modal-nucinfo-title">
+        <div class="modal-backdrop" data-close></div>
         <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('modal-launcher')">&times;</span>
-            <h2>Custom Launcher & Trajectory Calculator</h2>
-            <p class="modal-role">Mechanical Design & Analysis</p>
-            <ul>
-                <li>Applied calculus and physics equations to model energy transfer, apex height, and trajectory distance for a mechanical launcher build.</li>
-                <li>Machined structural support components and adjusted spring tension parameters to align physical test launch data within 5% of theoretical predictions.</li>
-            </ul>
+            <div class="modal-header">
+                <span class="project-role">Developer & Researcher</span>
+                <h3 id="modal-nucinfo-title" class="project-title">Nuclear Systems Analytics (NucInfo)</h3>
+                <button class="modal-close" aria-label="Close modal" data-close>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>An information dashboard aimed at demystifying nuclear energy operations through data transparency.</p>
+                <h4>Technical Details:</h4>
+                <ul>
+                    <li>Aggregated thermodynamic cycle data, safety margins, and operational metrics across various Generation III+ and Generation IV reactor types.</li>
+                    <li>Built an interactive web interface utilizing modern JavaScript frameworks to visualize complex data sets effectively.</li>
+                    <li>Structured the underlying data architecture to allow for easy updates as new reactor technologies and performance metrics are published.</li>
+                </ul>
+            </div>
         </div>
     </div>
 
-    <div id="modal-nucinfo" class="modal">
+    <div id="modal-meconnect" class="modal" aria-hidden="true" role="dialog" aria-labelledby="modal-meconnect-title">
+        <div class="modal-backdrop" data-close></div>
         <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('modal-nucinfo')">&times;</span>
-            <h2>Nuclear Systems Analytics Dashboard (NucInfo)</h2>
-            <p class="modal-role">Developer & Researcher</p>
-            <ul>
-                <li>Developed an interactive web analytics platform visualizing nuclear fission/fusion thermodynamics, 93% capacity factor metrics, and lifecycle carbon intensity (12g CO₂/kWh).</li>
-            </ul>
+            <div class="modal-header">
+                <span class="project-role">Creator & Web Architect</span>
+                <h3 id="modal-meconnect-title" class="project-title">ME Connect Student Engineering Platform</h3>
+                <button class="modal-close" aria-label="Close modal" data-close>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>A centralized digital infrastructure designed to enhance collaboration within the UW-Madison Mechanical Engineering student body.</p>
+                <h4>Technical Details:</h4>
+                <ul>
+                    <li>Designed the full-stack architecture prioritizing fast load times, responsive layouts, and intuitive navigation.</li>
+                    <li>Implemented secure user authentication and a database structure to manage team rosters, project postings, and shared resources.</li>
+                    <li>Deployed the platform utilizing modern CI/CD practices to ensure high availability and seamless feature updates.</li>
+                </ul>
+            </div>
         </div>
     </div>
 
-    <div id="modal-meconnect" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('modal-meconnect')">&times;</span>
-            <h2>ME Connect Student Engineering Platform</h2>
-            <p class="modal-role">Creator & Web Architect</p>
-            <ul>
-                <li>Architected and deployed a centralized networking platform to connect UW-Madison engineering undergraduates with faculty, mentorship portals, and course resources.</li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- Footer with SVG Icons & Resume -->
-    <footer class="footer">
-        <div class="container footer-container">
-            <div class="footer-info">
-                <h3>Let's Connect</h3>
-                <p>Open to engineering project collaborations and opportunities.</p>
+    <footer id="contact" class="footer section">
+        <div class="container">
+            <div class="footer-header">
+                <p class="section-eyebrow">05 / Contact</p>
+                <h2 class="section-title">Initiate Contact</h2>
             </div>
             
-            <div class="footer-links">
-                <!-- LinkedIn -->
-                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
-                    </svg>
-                </a>
-
-                <!-- GitHub -->
-                <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="GitHub Profile">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/>
-                    </svg>
-                </a>
-
-                <!-- Email -->
-                <a href="mailto:cohenbryant22@gmail.com" aria-label="Send Email">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-                    </svg>
-                </a>
-
-                <!-- Resume Link -->
-                <a href="assets/resume.pdf" target="_blank" class="footer-resume-btn" aria-label="View Resume PDF">Resume PDF</a>
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="https://www.linkedin.com/in/cohen-bryant-2511852a1/" target="_blank" rel="noopener noreferrer" class="footer-link">
+                        <span class="link-label">Network</span>
+                        <span class="link-value">LinkedIn ↗</span>
+                    </a>
+                    <a href="https://github.com/CBryant244" target="_blank" rel="noopener noreferrer" class="footer-link">
+                        <span class="link-label">Code</span>
+                        <span class="link-value">GitHub ↗</span>
+                    </a>
+                    <a href="mailto:cohenbryant22@gmail.com" class="footer-link">
+                        <span class="link-label">Email</span>
+                        <span class="link-value">cohenbryant22@gmail.com ↗</span>
+                    </a>
+                    <a href="assets/Resume_Cohen_Bryant_Nuclear_Energy_Engineering_2026-08.pdf" target="_blank" rel="noopener noreferrer" class="footer-link">
+                        <span class="link-label">Document</span>
+                        <span class="link-value">Resume PDF ↗</span>
+                    </a>
+                </div>
+                
+                <div class="footer-legal">
+                    <p>&copy; 2026 Cohen Bryant. All systems nominal.</p>
+                </div>
             </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 Cohen Bryant. Built with HTML, CSS, & JS.</p>
         </div>
     </footer>
 
-    <!-- Link to external JavaScript file -->
     <script src="script.js"></script>
 </body>
 </html>
