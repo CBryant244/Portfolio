@@ -1,404 +1,487 @@
+/* ==========================================================================
+   Cohen Bryant — Engineering Portfolio
+   Vanilla ES2020. No dependencies, no build step, no polyfills required.
+   Every module is independently guarded: if its markup is absent or an API
+   is missing, it returns quietly instead of breaking the rest of the page.
+   ========================================================================== */
+
 (() => {
     'use strict';
 
-    // 1. Reduced Motion Detection
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const motionQuery = matchMedia('(prefers-reduced-motion: reduce)');
+    const html = document.documentElement;
 
-    // 2. Particle Constellation Canvas Animation
-    const initParticles = () => {
-        if (prefersReducedMotion) return;
+    const onIdle = (fn) =>
+        'requestIdleCallback' in window ? requestIdleCallback(fn, { timeout: 800 }) : setTimeout(fn, 1);
 
-        const canvas = document.getElementById('hero-canvas');
-        if (!canvas) return;
+    /* ── Orbital starfield ────────────────────────────────────────────────
+       Depth-layered drift with a slow parallax response to the pointer.
+       Renders at device pixel ratio, and suspends entirely whenever the
+       canvas leaves the viewport or the tab loses visibility.
+    ------------------------------------------------------------------------ */
+    const initStarfield = () => {
+        const canvas = document.querySelector('[data-stars]');
+        if (!canvas || motionQuery.matches) return;
 
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { alpha: true });
         if (!ctx) return;
 
-        let width, height;
-        let particles = [];
-        let mouse = { x: -1000, y: -1000 };
+        const LAYERS = [
+            { count: 0.45, speed: 0.012, size: [0.4, 0.9], alpha: [0.25, 0.5] },
+            { count: 0.35, speed: 0.026, size: [0.6, 1.3], alpha: [0.4, 0.75] },
+            { count: 0.20, speed: 0.048, size: [0.9, 1.8], alpha: [0.6, 1.0] }
+        ];
 
-        const resize = () => {
-            width = canvas.parentElement.clientWidth;
-            height = canvas.parentElement.clientHeight;
-            canvas.width = width;
-            canvas.height = height;
+        let stars = [];
+        let width = 0;
+        let height = 0;
+        let dpr = 1;
+        let frame = 0;
+        let running = false;
+        const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
 
-            // Recalculate particle count
-            const baseArea = 1920 * 1080;
-            const currentArea = width * height;
-            // roughly 80 on desktop, 40 on mobile
-            const count = Math.max(20, Math.floor((currentArea / baseArea) * 80));
-            
-            particles = [];
-            for (let i = 0; i < count; i++) {
-                particles.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
-                    vx: (Math.random() - 0.5) * 0.6,
-                    vy: (Math.random() - 0.5) * 0.6,
-                    radius: Math.random() * 1.5 + 1,
-                    opacity: Math.random() * 0.5 + 0.3,
-                    color: i % 2 === 0 ? '#0077ff' : '#00d4ff'
-                });
-            }
-        };
+        const rand = (min, max) => min + Math.random() * (max - min);
 
-        let resizeTimeout;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => requestAnimationFrame(resize), 150);
-        });
-
-        // Mouse interaction
-        const heroSection = canvas.closest('.hero') || canvas.parentElement;
-        heroSection.addEventListener('mousemove', (e) => {
+        const build = () => {
             const rect = canvas.getBoundingClientRect();
-            mouse.x = e.clientX - rect.left;
-            mouse.y = e.clientY - rect.top;
-        }, { passive: true });
+            width = Math.max(1, Math.round(rect.width));
+            height = Math.max(1, Math.round(rect.height));
+            dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-        heroSection.addEventListener('mouseleave', () => {
-            mouse.x = -1000;
-            mouse.y = -1000;
-        }, { passive: true });
+            canvas.width = Math.round(width * dpr);
+            canvas.height = Math.round(height * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-        resize();
+            // Density scaled to area, clamped so phones and ultrawides both behave.
+            const total = Math.round(Math.min(320, Math.max(70, (width * height) / 7000)));
 
-        const animate = () => {
-            ctx.clearRect(0, 0, width, height);
-
-            // Update and draw particles
-            for (let i = 0; i < particles.length; i++) {
-                let p = particles[i];
-
-                // Mouse attraction
-                const dxMouse = mouse.x - p.x;
-                const dyMouse = mouse.y - p.y;
-                const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
-                
-                if (distMouse < 200) {
-                    p.vx += dxMouse * 0.005;
-                    p.vy += dyMouse * 0.005;
-                }
-
-                // Speed limits
-                const maxSpeed = 1.5;
-                const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-                if (speed > maxSpeed) {
-                    p.vx = (p.vx / speed) * maxSpeed;
-                    p.vy = (p.vy / speed) * maxSpeed;
-                }
-
-                p.x += p.vx;
-                p.y += p.vy;
-
-                // Wrap around edges
-                if (p.x < 0) p.x = width;
-                if (p.x > width) p.x = 0;
-                if (p.y < 0) p.y = height;
-                if (p.y > height) p.y = 0;
-
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fillStyle = p.color;
-                ctx.globalAlpha = p.opacity;
-                ctx.fill();
-
-                // Draw connections
-                for (let j = i + 1; j < particles.length; j++) {
-                    let p2 = particles[j];
-                    const dx = p.x - p2.x;
-                    const dy = p.y - p2.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-
-                    if (dist < 150) {
-                        ctx.beginPath();
-                        ctx.moveTo(p.x, p.y);
-                        ctx.lineTo(p2.x, p2.y);
-                        const lineOpacity = (1 - dist / 150) * 0.15;
-                        ctx.strokeStyle = `rgba(0, 119, 255, ${lineOpacity})`;
-                        ctx.globalAlpha = 1; // Handled by strokeStyle
-                        ctx.lineWidth = 1;
-                        ctx.stroke();
-                    }
-                }
-            }
-            
-            ctx.globalAlpha = 1;
-            requestAnimationFrame(animate);
-        };
-
-        animate();
-    };
-
-    // 3. Hero Entrance Animation
-    const initHeroEntrance = () => {
-        const hero = document.querySelector('.hero');
-        if (hero) {
-            setTimeout(() => {
-                hero.classList.add('loaded');
-            }, 100);
-        }
-    };
-
-    // 4. Navbar Scroll State & 5. Mobile Navigation
-    const initNavigation = () => {
-        const navbar = document.querySelector('.navbar');
-        if (!navbar) return;
-
-        // Scroll state
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 80) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-        }, { passive: true });
-
-        // Mobile toggle
-        const navToggle = document.querySelector('.nav-toggle');
-        const navLinks = document.querySelectorAll('.nav-links a');
-
-        if (navToggle) {
-            navToggle.addEventListener('click', () => {
-                const isOpen = navbar.classList.toggle('nav-open');
-                navToggle.setAttribute('aria-expanded', isOpen);
-                navToggle.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
-            });
-        }
-
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                if (navbar.classList.contains('nav-open')) {
-                    navbar.classList.remove('nav-open');
-                    if (navToggle) {
-                        navToggle.setAttribute('aria-expanded', 'false');
-                        navToggle.setAttribute('aria-label', 'Open navigation menu');
-                    }
-                }
-            });
-        });
-    };
-
-    // 6. Scroll Spy (Active Nav Link)
-    const initScrollSpy = () => {
-        const sections = document.querySelectorAll('section[id], footer[id], main[id]');
-        const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
-        
-        if (sections.length === 0 || navLinks.length === 0) return;
-
-        const observerOptions = {
-            threshold: 0.3,
-            rootMargin: '-20% 0px -60% 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const id = entry.target.getAttribute('id');
-                    
-                    navLinks.forEach(link => {
-                        link.classList.remove('active');
-                        if (link.getAttribute('href') === `#${id}`) {
-                            link.classList.add('active');
-                        }
+            stars = [];
+            LAYERS.forEach((layer, depth) => {
+                for (let i = 0; i < total * layer.count; i++) {
+                    stars.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        r: rand(layer.size[0], layer.size[1]),
+                        a: rand(layer.alpha[0], layer.alpha[1]),
+                        vx: -layer.speed * rand(0.7, 1.3),
+                        vy: layer.speed * rand(-0.25, 0.25),
+                        depth: depth + 1,
+                        phase: Math.random() * Math.PI * 2,
+                        twinkle: rand(0.0008, 0.0025)
                     });
                 }
             });
-        }, observerOptions);
+        };
 
-        sections.forEach(section => {
-            observer.observe(section);
-        });
-    };
+        const draw = (time) => {
+            if (!running) return;
 
-    // 7. Scroll Reveal
-    const initScrollReveal = () => {
-        const revealElements = document.querySelectorAll('.reveal');
-        if (revealElements.length === 0) return;
+            pointer.x += (pointer.tx - pointer.x) * 0.045;
+            pointer.y += (pointer.ty - pointer.y) * 0.045;
 
-        if (prefersReducedMotion) {
-            revealElements.forEach(el => el.classList.add('visible'));
-            return;
+            ctx.clearRect(0, 0, width, height);
+
+            for (const s of stars) {
+                s.x += s.vx * s.depth;
+                s.y += s.vy * s.depth;
+
+                if (s.x < -2) s.x = width + 2;
+                else if (s.x > width + 2) s.x = -2;
+                if (s.y < -2) s.y = height + 2;
+                else if (s.y > height + 2) s.y = -2;
+
+                const px = s.x + pointer.x * s.depth * 1.6;
+                const py = s.y + pointer.y * s.depth * 1.6;
+
+                const flicker = 0.72 + 0.28 * Math.sin(time * s.twinkle + s.phase);
+                ctx.globalAlpha = Math.max(0, Math.min(1, s.a * flicker));
+                ctx.fillStyle = s.depth === 3 ? '#dceaff' : '#ffffff';
+                ctx.beginPath();
+                ctx.arc(px, py, s.r, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.globalAlpha = 1;
+            frame = requestAnimationFrame(draw);
+        };
+
+        const start = () => {
+            if (running) return;
+            running = true;
+            frame = requestAnimationFrame(draw);
+        };
+        const stop = () => {
+            running = false;
+            cancelAnimationFrame(frame);
+        };
+
+        build();
+
+        // Pause when scrolled past, so it never burns cycles off-screen.
+        if ('IntersectionObserver' in window) {
+            new IntersectionObserver(
+                ([entry]) => (entry.isIntersecting && !document.hidden ? start() : stop()),
+                { threshold: 0 }
+            ).observe(canvas);
+        } else {
+            start();
         }
 
-        const observer = new IntersectionObserver((entries, obs) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    obs.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.12 });
+        document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
 
-        revealElements.forEach(el => observer.observe(el));
+        if ('ResizeObserver' in window) {
+            let raf = 0;
+            new ResizeObserver(() => {
+                cancelAnimationFrame(raf);
+                raf = requestAnimationFrame(build);
+            }).observe(canvas);
+        } else {
+            addEventListener('resize', build, { passive: true });
+        }
+
+        const host = canvas.closest('.hero') || canvas;
+        host.addEventListener(
+            'pointermove',
+            (e) => {
+                if (e.pointerType !== 'mouse') return;
+                const rect = host.getBoundingClientRect();
+                pointer.tx = ((e.clientX - rect.left) / rect.width - 0.5) * -14;
+                pointer.ty = ((e.clientY - rect.top) / rect.height - 0.5) * -10;
+            },
+            { passive: true }
+        );
+        host.addEventListener('pointerleave', () => {
+            pointer.tx = 0;
+            pointer.ty = 0;
+        });
+
+        motionQuery.addEventListener('change', (e) => {
+            if (e.matches) {
+                stop();
+                ctx.clearRect(0, 0, width, height);
+            } else {
+                start();
+            }
+        });
     };
 
-    // 8. Modal System
-    const initModals = () => {
-        const modalTriggers = document.querySelectorAll('[data-modal]');
-        const closeButtons = document.querySelectorAll('.modal [data-close]');
-        const modals = document.querySelectorAll('.modal');
+    /* ── Scroll-linked navigation state and progress rail ─────────────── */
+    const initNavState = () => {
+        const nav = document.querySelector('[data-nav]');
+        let ticking = false;
 
-        const openModal = (id) => {
-            const modal = document.getElementById(id);
-            if (!modal) return;
-            
-            modal.classList.remove('hidden');
-            // Force reflow for animation
-            void modal.offsetWidth;
-            modal.classList.add('is-open');
-            document.body.style.overflow = 'hidden';
-            
-            const closeBtn = modal.querySelector('[data-close]');
-            if (closeBtn) closeBtn.focus();
+        const update = () => {
+            const y = window.scrollY;
+            if (nav) nav.classList.toggle('is-stuck', y > 24);
+
+            const scrollable = html.scrollHeight - window.innerHeight;
+            const progress = scrollable > 0 ? Math.min(1, Math.max(0, y / scrollable)) : 0;
+            html.style.setProperty('--scroll-progress', progress.toFixed(4));
+
+            ticking = false;
         };
 
-        const closeModal = (modal) => {
-            if (!modal) return;
-            
-            modal.classList.remove('is-open');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300); // match transition duration
-            
-            document.body.style.overflow = '';
+        addEventListener(
+            'scroll',
+            () => {
+                if (ticking) return;
+                ticking = true;
+                requestAnimationFrame(update);
+            },
+            { passive: true }
+        );
+        addEventListener('resize', update, { passive: true });
+        update();
+    };
+
+    /* ── Mobile navigation ────────────────────────────────────────────── */
+    const initNavMenu = () => {
+        const nav = document.querySelector('[data-nav]');
+        const toggle = document.querySelector('[data-nav-toggle]');
+        const panel = document.getElementById('primary-nav');
+        if (!nav || !toggle || !panel) return;
+
+        const label = toggle.querySelector('.sr-only');
+
+        const setOpen = (open) => {
+            nav.classList.toggle('is-open', open);
+            toggle.setAttribute('aria-expanded', String(open));
+            if (label) label.textContent = open ? 'Close navigation' : 'Open navigation';
         };
 
-        modalTriggers.forEach(trigger => {
-            trigger.addEventListener('click', (e) => {
-                e.preventDefault();
-                const targetId = trigger.getAttribute('data-modal');
-                openModal(targetId);
-            });
-        });
+        toggle.addEventListener('click', () => setOpen(!nav.classList.contains('is-open')));
 
-        closeButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const modal = btn.closest('.modal');
-                closeModal(modal);
-            });
-        });
-
-        modals.forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    closeModal(modal);
-                }
-            });
+        panel.addEventListener('click', (e) => {
+            if (e.target.closest('a')) setOpen(false);
         });
 
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                const openModalEl = document.querySelector('.modal.is-open');
-                if (openModalEl) closeModal(openModalEl);
+            if (e.key === 'Escape' && nav.classList.contains('is-open')) {
+                setOpen(false);
+                toggle.focus();
             }
         });
-    };
 
-    // 9. Project Filter
-    const initProjectFilter = () => {
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        const projectCards = document.querySelectorAll('.project-card');
+        document.addEventListener('click', (e) => {
+            if (nav.classList.contains('is-open') && !nav.contains(e.target)) setOpen(false);
+        });
 
-        if (filterBtns.length === 0 || projectCards.length === 0) return;
-
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                // Update active state
-                filterBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-
-                const filterValue = btn.getAttribute('data-filter');
-
-                projectCards.forEach(card => {
-                    const category = card.getAttribute('data-category');
-                    if (!category) return;
-
-                    if (filterValue === 'all' || category.includes(filterValue)) {
-                        card.classList.remove('hidden');
-                    } else {
-                        card.classList.add('hidden');
-                    }
-                });
-            });
+        // Collapse if the viewport grows past the mobile breakpoint while open.
+        matchMedia('(min-width: 821px)').addEventListener('change', (e) => {
+            if (e.matches) setOpen(false);
         });
     };
 
-    // 10. Counter Animation for Hero Stats
-    const initCounterAnimation = () => {
-        const statsContainer = document.querySelector('.hero-stats');
-        const statValues = document.querySelectorAll('.stat-value[data-target]');
-        
-        if (!statsContainer || statValues.length === 0) return;
+    /* ── Active-section highlighting ──────────────────────────────────── */
+    const initScrollSpy = () => {
+        if (!('IntersectionObserver' in window)) return;
 
-        let animated = false;
+        const links = [...document.querySelectorAll('.nav-list a[href^="#"]')].filter(
+            (a) => a.getAttribute('href').length > 1
+        );
+        if (!links.length) return;
 
-        const easeOutQuart = (t) => 1 - Math.pow(1 - t, 4);
+        const targets = links
+            .map((link) => document.querySelector(link.getAttribute('href')))
+            .filter(Boolean);
+        if (!targets.length) return;
 
-        const animateStats = () => {
-            if (animated || prefersReducedMotion) {
-                if (prefersReducedMotion) {
-                    statValues.forEach(el => {
-                        el.textContent = el.getAttribute('data-target');
-                    });
+        const visible = new Set();
+
+        const paint = () => {
+            let best = null;
+            let bestTop = Infinity;
+
+            visible.forEach((el) => {
+                const top = Math.abs(el.getBoundingClientRect().top);
+                if (top < bestTop) {
+                    bestTop = top;
+                    best = el;
                 }
-                return;
-            }
-            animated = true;
-
-            const duration = 2000;
-
-            statValues.forEach(el => {
-                const targetStr = el.getAttribute('data-target');
-                const targetNum = parseFloat(targetStr.replace(/[^0-9.-]/g, ''));
-                const suffix = targetStr.replace(/[0-9.-]/g, '');
-                const startTime = performance.now();
-
-                const update = (currentTime) => {
-                    const elapsed = currentTime - startTime;
-                    const progress = Math.min(elapsed / duration, 1);
-                    const easedProgress = easeOutQuart(progress);
-                    
-                    const currentVal = (targetNum * easedProgress).toFixed(targetNum % 1 !== 0 ? 1 : 0);
-                    
-                    el.textContent = currentVal + suffix;
-
-                    if (progress < 1) {
-                        requestAnimationFrame(update);
-                    } else {
-                        el.textContent = targetStr;
-                    }
-                };
-                
-                requestAnimationFrame(update);
             });
+
+            links.forEach((link) =>
+                link.classList.toggle('is-current', !!best && link.getAttribute('href') === `#${best.id}`)
+            );
         };
 
-        const observer = new IntersectionObserver((entries, obs) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    animateStats();
-                    obs.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.5 });
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) =>
+                    entry.isIntersecting ? visible.add(entry.target) : visible.delete(entry.target)
+                );
+                paint();
+            },
+            { rootMargin: '-45% 0px -50% 0px', threshold: 0 }
+        );
 
-        observer.observe(statsContainer);
+        targets.forEach((el) => observer.observe(el));
     };
 
-    // Initialize all
-    document.addEventListener('DOMContentLoaded', () => {
-        initHeroEntrance();
-        initParticles();
-        initNavigation();
-        initScrollSpy();
-        initScrollReveal();
-        initModals();
-        initProjectFilter();
-        initCounterAnimation();
-    });
+    /* ── Scroll reveal, with per-group stagger ────────────────────────── */
+    const initReveal = () => {
+        const items = [...document.querySelectorAll('[data-anim]')];
+        if (!items.length) return;
 
+        if (motionQuery.matches || !('IntersectionObserver' in window)) {
+            items.forEach((el) => el.classList.add('is-in'));
+            return;
+        }
+
+        // Stagger each element against its siblings so groups cascade.
+        items.forEach((el) => {
+            const siblings = [...el.parentElement.children].filter((n) => n.hasAttribute('data-anim'));
+            const index = siblings.indexOf(el);
+            if (index > 0) el.style.setProperty('--anim-delay', `${Math.min(index * 80, 400)}ms`);
+        });
+
+        const observer = new IntersectionObserver(
+            (entries, obs) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add('is-in');
+                    obs.unobserve(entry.target);
+                });
+            },
+            { threshold: 0.08, rootMargin: '0px 0px -8% 0px' }
+        );
+
+        items.forEach((el) => observer.observe(el));
+    };
+
+    /* ── Statistic counters ───────────────────────────────────────────── */
+    const initCounters = () => {
+        const counters = [...document.querySelectorAll('[data-count]')];
+        if (!counters.length) return;
+
+        const render = (el, value) => {
+            const pad = Number(el.dataset.pad || 0);
+            el.textContent = String(Math.round(value)).padStart(pad, '0');
+        };
+
+        if (motionQuery.matches || !('IntersectionObserver' in window)) {
+            counters.forEach((el) => render(el, Number(el.dataset.count)));
+            return;
+        }
+
+        const run = (el) => {
+            const target = Number(el.dataset.count) || 0;
+            const duration = 1400;
+            const started = performance.now();
+
+            const step = (now) => {
+                const t = Math.min(1, (now - started) / duration);
+                const eased = 1 - Math.pow(1 - t, 4);
+                render(el, target * eased);
+                if (t < 1) requestAnimationFrame(step);
+                else render(el, target);
+            };
+
+            render(el, 0);
+            requestAnimationFrame(step);
+        };
+
+        const observer = new IntersectionObserver(
+            (entries, obs) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    run(entry.target);
+                    obs.unobserve(entry.target);
+                });
+            },
+            { threshold: 0.6 }
+        );
+
+        counters.forEach((el) => observer.observe(el));
+    };
+
+    /* ── Project filtering ───────────────────────────────────────────── */
+    const initFilters = () => {
+        const buttons = [...document.querySelectorAll('[data-filter]')];
+        const grid = document.querySelector('[data-work-grid]');
+        if (!buttons.length || !grid) return;
+
+        const cards = [...grid.querySelectorAll('[data-tags]')];
+        const status = document.querySelector('[data-filter-status]');
+        const empty = document.querySelector('[data-work-empty]');
+
+        const apply = (filter) => {
+            let shown = 0;
+
+            cards.forEach((card) => {
+                const tags = (card.dataset.tags || '').split(/\s+/);
+                const match = filter === 'all' || tags.includes(filter);
+                card.hidden = !match;
+                if (match) shown++;
+            });
+
+            buttons.forEach((btn) => {
+                const active = btn.dataset.filter === filter;
+                btn.classList.toggle('is-active', active);
+                btn.setAttribute('aria-pressed', String(active));
+            });
+
+            if (empty) empty.hidden = shown > 0;
+
+            if (status) {
+                const noun = shown === 1 ? 'project' : 'projects';
+                status.textContent =
+                    filter === 'all'
+                        ? `Showing all ${shown} ${noun}`
+                        : `Showing ${shown} ${filter} ${noun}`;
+            }
+        };
+
+        buttons.forEach((btn) => btn.addEventListener('click', () => apply(btn.dataset.filter)));
+    };
+
+    /* ── Case-note dialogs ───────────────────────────────────────────────
+       Native <dialog> supplies the focus trap, Escape handling, top-layer
+       stacking, and focus restoration. We add backdrop dismissal, scroll
+       locking, and a graceful path for engines without showModal().
+    ------------------------------------------------------------------------ */
+    const initDialogs = () => {
+        const triggers = [...document.querySelectorAll('[data-open]')];
+        if (!triggers.length) return;
+
+        const lock = (on) => {
+            if (on) {
+                const gap = window.innerWidth - html.clientWidth;
+                if (gap > 0) html.style.setProperty('scrollbar-gutter', 'stable');
+                html.style.overflow = 'hidden';
+            } else {
+                html.style.overflow = '';
+                html.style.removeProperty('scrollbar-gutter');
+            }
+        };
+
+        const open = (dialog) => {
+            if (typeof dialog.showModal === 'function') dialog.showModal();
+            else dialog.setAttribute('open', '');
+            lock(true);
+        };
+
+        const close = (dialog) => {
+            if (typeof dialog.close === 'function') dialog.close();
+            else dialog.removeAttribute('open');
+            lock(false);
+        };
+
+        triggers.forEach((trigger) => {
+            const dialog = document.getElementById(trigger.dataset.open);
+            if (!dialog) return;
+            trigger.addEventListener('click', () => open(dialog));
+        });
+
+        document.querySelectorAll('dialog').forEach((dialog) => {
+            dialog.addEventListener('close', () => lock(false));
+
+            dialog.querySelectorAll('[data-close]').forEach((btn) =>
+                btn.addEventListener('click', () => close(dialog))
+            );
+
+            // A click landing on the dialog element itself is a backdrop click.
+            dialog.addEventListener('click', (e) => {
+                if (e.target === dialog) close(dialog);
+            });
+        });
+    };
+
+    /* ── Footer year ─────────────────────────────────────────────────── */
+    const initYear = () => {
+        const slot = document.querySelector('[data-year]');
+        if (slot) slot.textContent = String(new Date().getFullYear());
+    };
+
+    /* ── Boot ────────────────────────────────────────────────────────────
+       Each module is isolated: if one throws on an engine that lacks an API
+       it depends on, the remaining features still initialize.
+    ------------------------------------------------------------------------ */
+    const safely = (name, fn) => {
+        try {
+            fn();
+        } catch (error) {
+            console.warn(`[portfolio] ${name} failed to initialize:`, error);
+        }
+    };
+
+    const boot = () => {
+        safely('reveal', initReveal);
+        safely('navState', initNavState);
+        safely('navMenu', initNavMenu);
+        safely('counters', initCounters);
+        safely('filters', initFilters);
+        safely('dialogs', initDialogs);
+        safely('year', initYear);
+
+        // Deferred so neither competes with first paint.
+        onIdle(() => safely('starfield', initStarfield));
+        onIdle(() => safely('scrollSpy', initScrollSpy));
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot, { once: true });
+    } else {
+        boot();
+    }
 })();
