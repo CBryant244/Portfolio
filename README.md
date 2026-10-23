@@ -1,12 +1,8 @@
-# Cohen Bryant - Engineering Portfolio
+# Cohen Bryant — Mechanical Engineering Portfolio
 
-A static portfolio site for a mechanical engineering student focused on nuclear
-propulsion, thermal architectures, and embedded control.
+A high-performance static portfolio site for an incoming mechanical engineering undergraduate at UW–Madison focused on propulsion systems, rocket engines, thermal architectures, and engineering data analysis.
 
-**No build step. No dependencies. No framework.** Three files do the work, which
-is deliberate: there is nothing here to go out of date, no lockfile to audit, and
-no toolchain to reinstall in two years. It will still run correctly as-is long
-after any given bundler generation has been replaced.
+**No build step. No dependencies. No framework.** Built with semantic HTML5, modern CSS3 (cascade layers, design tokens), and vanilla ES2020 JavaScript. It deploys directly to Vercel and runs on any standard static file server.
 
 Live at <https://portfolio-six-ecru-11.vercel.app>.
 
@@ -17,40 +13,46 @@ Live at <https://portfolio-six-ecru-11.vercel.app>.
 Any static file server works. With Python:
 
 ```bash
-python -m http.server 8000
+python3 -m http.server 8000
 ```
 
 Then open <http://127.0.0.1:8000>.
-
-Opening `index.html` directly over `file://` mostly works, but the manifest and a
-few absolute `/assets/...` paths resolve only over HTTP, so prefer the server.
 
 ---
 
 ## Layout
 
 ```
-index.html            Single page: hero, focus, work, capabilities, profile, contact
-styles.css            All styles, organized with CSS cascade layers
-script.js             All behavior, vanilla ES2020, no dependencies
-404.html              Custom not-found page
-site.webmanifest      PWA / installability metadata
-robots.txt            Crawler directives + sitemap pointer
-sitemap.xml           Single-URL sitemap
-vercel.json           Security headers and cache policy for Vercel
-tools/
-  generate-assets.ps1 Regenerates the PNG icons and the social card
+index.html                    Homepage: hero, featured WISP work, projects, technical interests, methodology, capabilities, profile, contact
+projects/
+  wisp-torch-ignitor.html     Dedicated WISP Torch Ignitor Case Study & Embedded PDF Presentation
+  wisp-torch-ignitor/         Directory index alias for clean URLs
+styles.css                    All styles, organized with CSS cascade layers and design tokens
+script.js                     Vanilla ES2020: starfield canvas, subnav scrollspy, document viewer toggle, counters, dialogs
+404.html                      Custom not-found page
+site.webmanifest              PWA / installability metadata
+robots.txt                    Crawler directives + sitemap pointer
+sitemap.xml                   Multi-page XML sitemap
+vercel.json                   Security headers (CSP frame-src, object-src) and cache policies for Vercel
 assets/
-  favicon.svg              Scalable icon (orbit-and-core mark)
-  apple-touch-icon.png     180x180, generated
-  icon-192.png             Generated
-  icon-512.png             Generated
-  og-cover.png             1200x630 social preview, generated
-  cohen-headshot.jpg
-  launcher-front.jpg, launcher-top.jpg, launcher-side.jpg
-  seedream-*.jpg           ME Connect brand image
-  Resume_Cohen_Bryant_Nuclear_Energy_Engineering_2026-08.pdf
-  Ball launcher Portfolio.pdf
+  favicon.svg                 Scalable vector icon
+  apple-touch-icon.png        180x180 icon
+  icon-192.png, icon-512.png  PWA icons
+  og-cover.png                1200x630 social preview card
+  cohen-headshot.jpg          Profile photo at UW–Madison Engineering
+  Cohen_Bryant_Draft.pdf      Current Résumé PDF
+  wisp-page-1.png, wisp-page-2.png  High-res renders of original data presentation
+  documents/
+    wisp-torch-ignitor-analysis.pdf Complete 2-page source PDF presentation
+  figures/                    Extracted high-resolution engineering plots & tables
+    wisp-p1-g1-throat-temp.png
+    wisp-p1-g2-radial-profile.png
+    wisp-p1-g3-firing-duration.png
+    wisp-p1-g4-orifice-sizing.png
+    wisp-p2-g1-mach-geometry.png
+    wisp-p2-g2-pressure-temp.png
+    wisp-p2-g3-velocity-heatflux.png
+    wisp-p2-g4-species-massfrac.png
 ```
 
 ---

@@ -283,16 +283,21 @@
         const items = [...document.querySelectorAll('[data-anim]')];
         if (!items.length) return;
 
-        if (motionQuery.matches || !('IntersectionObserver' in window)) {
-            items.forEach((el) => el.classList.add('is-in'));
-            return;
-        }
+        if (motionQuery.matches || !('IntersectionObserver' in window)) return;
 
-        // Stagger each element against its siblings so groups cascade.
-        items.forEach((el) => {
+        const vh = window.innerHeight || 800;
+
+        // Only apply entrance animation to elements well below the initial fold
+        const belowFold = items.filter((el) => {
+            const rect = el.getBoundingClientRect();
+            return rect.top > vh * 0.9;
+        });
+
+        belowFold.forEach((el) => {
             const siblings = [...el.parentElement.children].filter((n) => n.hasAttribute('data-anim'));
             const index = siblings.indexOf(el);
-            if (index > 0) el.style.setProperty('--anim-delay', `${Math.min(index * 80, 400)}ms`);
+            if (index > 0) el.style.setProperty('--anim-delay', `${Math.min(index * 70, 280)}ms`);
+            el.classList.add('anim-ready');
         });
 
         const observer = new IntersectionObserver(
@@ -303,10 +308,10 @@
                     obs.unobserve(entry.target);
                 });
             },
-            { threshold: 0.08, rootMargin: '0px 0px -8% 0px' }
+            { threshold: 0, rootMargin: '0px 0px 80px 0px' }
         );
 
-        items.forEach((el) => observer.observe(el));
+        belowFold.forEach((el) => observer.observe(el));
     };
 
     /* ── Statistic counters ───────────────────────────────────────────── */
@@ -453,6 +458,110 @@
         if (slot) slot.textContent = String(new Date().getFullYear());
     };
 
+    /* ── Document viewer view switcher ────────────────────────────────── */
+    const initDocViewer = () => {
+        const viewer = document.querySelector('[data-doc-viewer]');
+        if (!viewer) return;
+
+        const toggleBtns = [...viewer.querySelectorAll('[data-doc-view]')];
+        const pagesContainer = viewer.querySelector('[data-doc-pages]');
+        const iframeContainer = viewer.querySelector('[data-doc-iframe-wrap]');
+
+        toggleBtns.forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const mode = btn.dataset.docView;
+                toggleBtns.forEach((b) => {
+                    const active = b === btn;
+                    b.classList.toggle('is-active', active);
+                    b.setAttribute('aria-pressed', String(active));
+                });
+
+                if (mode === 'iframe') {
+                    if (pagesContainer) pagesContainer.style.display = 'none';
+                    if (iframeContainer) iframeContainer.classList.add('is-active');
+                } else {
+                    if (pagesContainer) pagesContainer.style.display = 'flex';
+                    if (iframeContainer) iframeContainer.classList.remove('is-active');
+                }
+            });
+        });
+
+        // Fullscreen support
+        const fsBtn = viewer.querySelector('[data-doc-fullscreen]');
+        if (fsBtn) {
+            fsBtn.addEventListener('click', () => {
+                if (!document.fullscreenElement) {
+                    if (viewer.requestFullscreen) viewer.requestFullscreen();
+                    else if (viewer.webkitRequestFullscreen) viewer.webkitRequestFullscreen();
+                } else {
+                    if (document.exitFullscreen) document.exitFullscreen();
+                    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+                }
+            });
+        }
+    };
+
+    /* ── Case Study Section Subnav Spy ─────────────────────────────────── */
+    const initCaseSubnav = () => {
+        const subnav = document.querySelector('[data-case-subnav]');
+        if (!subnav || !('IntersectionObserver' in window)) return;
+
+        const links = [...subnav.querySelectorAll('.case-subnav-link')];
+        if (!links.length) return;
+
+        const sections = links
+            .map((link) => document.querySelector(link.getAttribute('href')))
+            .filter(Boolean);
+        if (!sections.length) return;
+
+        const visibleSections = new Set();
+
+        const updateActive = () => {
+            let activeEl = null;
+            let minDistance = Infinity;
+
+            visibleSections.forEach((el) => {
+                const dist = Math.abs(el.getBoundingClientRect().top - 120);
+                if (dist < minDistance) {
+                    minDistance = dist;
+                    activeEl = el;
+                }
+            });
+
+            if (!activeEl && sections.length) {
+                const scrollY = window.scrollY;
+                for (let i = sections.length - 1; i >= 0; i--) {
+                    if (sections[i].offsetTop - 140 <= scrollY) {
+                        activeEl = sections[i];
+                        break;
+                    }
+                }
+            }
+
+            links.forEach((link) => {
+                const isMatch = activeEl && link.getAttribute('href') === `#${activeEl.id}`;
+                link.classList.toggle('is-active', isMatch);
+                if (isMatch) {
+                    link.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+                }
+            });
+        };
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) visibleSections.add(entry.target);
+                    else visibleSections.delete(entry.target);
+                });
+                updateActive();
+            },
+            { rootMargin: '-10% 0px -50% 0px', threshold: 0 }
+        );
+
+        sections.forEach((sec) => observer.observe(sec));
+        window.addEventListener('scroll', updateActive, { passive: true });
+    };
+
     /* ── Boot ────────────────────────────────────────────────────────────
        Each module is isolated: if one throws on an engine that lacks an API
        it depends on, the remaining features still initialize.
@@ -473,6 +582,8 @@
         safely('filters', initFilters);
         safely('dialogs', initDialogs);
         safely('year', initYear);
+        safely('docViewer', initDocViewer);
+        safely('caseSubnav', initCaseSubnav);
 
         // Deferred so neither competes with first paint.
         onIdle(() => safely('starfield', initStarfield));
